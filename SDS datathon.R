@@ -150,7 +150,7 @@ base_model <- train(charges ~ .-sex, data = train, method = "lm")
 test_base <- predict(base_model, newdata = test)
 # Calculate RMSE (Root Mean Squared Error)
 rmse_base <- sqrt(mean((test$charges - test_base)^2))
-# RMSE is 552.6
+# RMSE is 5752.6
 
 # Advanced model (XGBoost)
 # Data & columns
@@ -204,7 +204,7 @@ xgb_fit <- xgb.train(
   early_stopping_rounds = early_stopping_rounds,
   print_every_n = 25
 )
-# RMSE is 4371.1 at iteration 101
+# RMSE is 4334.8 at iteration 93
 
 # Feature importance
 importance <- xgb.importance(
