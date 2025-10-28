@@ -20,16 +20,23 @@ library(Matrix) # for xgboost
 # Reading in data
 insurance = read.csv('insurance.csv', header = TRUE, stringsAsFactors = TRUE)
 # Data set has 1338 observations and 7 variables
-head(insurance)
-summary(insurance)
+
 
 #########################################################
 #               Exploratory data analysis               #
 #########################################################
 
+head(insurance)
+summary(insurance)
+
 # Removing observations with at least one missing value
 insurance <- na.omit(insurance)
 # Data set still has 1338 observations
+
+# Removing duplicated observations
+insurance <- distinct(insurance)
+# Data set now has 1337 observation (1 duplicated entry)
+summary(insurance)
 
                 # === data visualisation === #
 # Check for outliers in response variable, charges and bmi variable
@@ -99,14 +106,14 @@ table_data <- table(insurance$sex, insurance$smoker)
 # Perform Chi-Square Test
 chi_test <- chisq.test(table_data)
 chi_test
-# Since p-value = 0.00655 < 0.05, there is statistically significant association
+# Since p-value = 0.00628 < 0.05, there is statistically significant association
 # between sex and smoker.
 
                 # === data visualisation ===
 # Stacked bar plot between sex and smoker
 ggplot(insurance, aes(x = sex, fill = smoker)) + 
   geom_bar(position = "fill") + 
-  geom_hline(yintercept = 274/1338, linetype = "dotted", color = "black") +
+  geom_hline(yintercept = 274/1337, linetype = "dotted", color = "black") +
   labs(title = "Proportion of smoker within sex", y = "Proportion of smoker")
 
 #########################################################
@@ -137,7 +144,7 @@ summary(lm1)$outm
 # we will be using 70/30 train test split to compute the test error.
 set.seed(2505) # to ensure replicability
 
-ntrain = 936 #set size of the training sample to 70% of observations (1338)
+ntrain = 936 #set size of the training sample to 70% of observations (1337)
 
 tr = sample(1:nrow(insurance_encoded),ntrain)  # draw ntrain observations from original data
 train = insurance_encoded[tr,]   # Training sample
@@ -147,10 +154,27 @@ test = insurance_encoded[-tr,]   # Testing sample (note negative index selects e
 # Train the baseline model using 5-fold cross-validation
 base_model <- train(charges ~ .-sex, data = train, method = "lm")
 # Predict on test data
-test_base <- predict(base_model, newdata = test)
+pred_base <- predict(base_model, newdata = test)
 # Calculate RMSE (Root Mean Squared Error)
-rmse_base <- sqrt(mean((test$charges - test_base)^2))
-# RMSE is 5752.6
+rmse_base <- sqrt(mean((test$charges - pred_base)^2))
+rmse_base
+# RMSE is 6015.2
+
+# Visualisation of base model
+data_base <- data.frame(
+  actual = test$charges,
+  predicted = pred_base
+)
+
+ggplot(data_base, aes(x = actual, y = predicted)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(linetype = "dashed") +   # 45° reference line
+  labs(
+    title = "Actual vs Predicted Charges (base model)",
+    x = "Actual Charges",
+    y = "Predicted Charges"
+  ) +
+  theme_minimal()
 
 # Advanced model (XGBoost)
 # Data & columns
@@ -204,7 +228,26 @@ xgb_fit <- xgb.train(
   early_stopping_rounds = early_stopping_rounds,
   print_every_n = 25
 )
-# RMSE is 4334.8 at iteration 93
+# RMSE is 4624.3 at iteration 102
+
+# Visualisation of advanced model
+pred_ad <- predict(xgb_fit, dtest)
+
+data_ad <- data.frame(
+  actual = label_test,
+  predicted = pred_ad
+)
+
+ggplot(data_ad, aes(x = actual, y = predicted)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(linetype = "dashed") +   # 45° reference line
+  labs(
+    title = "Actual vs Predicted Charges (advanced model)",
+    x = "Actual Charges",
+    y = "Predicted Charges"
+  ) +
+  theme_minimal()
+
 
 # Feature importance
 importance <- xgb.importance(
@@ -221,18 +264,17 @@ xgb.plot.importance(importance, top_n = 10)
 # Checking for sex variable
 lm2 <- lm(charges ~., data = insurance)
 summary(lm2)
-# Note that sex has a p-value of 0.693, 
+# Note that sex has a p-value of 0.698, 
 # differences in charges due to gender is not statistically significant.
 # Box plot for charges vs sex 
 # shows that median and IQR for charges based on gender is similar.
 # Charges based on gender is likely fair.
 
 # Checking for region variable
-
                 # === statistical method check === #
 # Kruskal–Wallis test for 4 different regions seperately
 kruskal.test(charges ~ region, data = insurance)
-# p-value = 0.192 > 0.05, differences in charges due to 4 different region is 
+# p-value = 0.202 > 0.05, differences in charges due to 4 different region is 
 # not statistically significant ie. fairly similar.
 
 # Combine into 2 regions and compare North vs South
@@ -244,7 +286,7 @@ insurance_ns <- insurance %>%
 
 # # Kruskal–Wallis test for North vs South
 kruskal.test(charges ~ region_ns, data = insurance_ns)
-# p-value = 0.443 > 0.05, differences in charges due to North and South region is 
+# p-value = 0.417 > 0.05, differences in charges due to North and South region is 
 # not statistically significant ie. fairly similar.
 
 # Combine into 2 regions and compare East vs West
@@ -256,7 +298,7 @@ insurance_ew <- insurance %>%
 
 # Kruskal–Wallis test for East vs West
 kruskal.test(charges ~ region_ew, data = insurance_ew)
-# p-value = 0.0447 < 0.05, differences in charges due to East and West region is statistically significant.
+# p-value = 0.0495 < 0.05, differences in charges due to East and West region is statistically significant.
 
 
                 # === data visualisation === #
