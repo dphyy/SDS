@@ -347,7 +347,7 @@ ggplot(insurance_ew, aes(x = region_ew, y = charges, fill = region_ew)) +
   geom_violin(trim = FALSE, alpha = 0.6) +
   geom_boxplot(width = 0.1, outlier.shape = NA, alpha = 0.5) +  # overlay boxplot
   labs(
-    title = "Insurance Charges: East vs West (Significant Difference)",
+    title = "Insurance Charges: East vs West",
     x = "Region",
     y = "Charges"
   ) +
