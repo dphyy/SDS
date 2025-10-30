@@ -170,7 +170,7 @@ ggplot(data_base, aes(x = actual, y = predicted)) +
   geom_point(alpha = 0.5) +
   geom_abline(linetype = "dashed") +   # 45° reference line
   labs(
-    title = "Actual vs Predicted Charges (base model)",
+    title = "Predicted vs Actual Charges (base model)",
     x = "Actual Charges",
     y = "Predicted Charges"
   ) +
@@ -242,7 +242,7 @@ ggplot(data_ad, aes(x = actual, y = predicted)) +
   geom_point(alpha = 0.5) +
   geom_abline(linetype = "dashed") +   # 45° reference line
   labs(
-    title = "Actual vs Predicted Charges (advanced model)",
+    title = "Predicted vs Actual Charges (advanced model)",
     x = "Actual Charges",
     y = "Predicted Charges"
   ) +
