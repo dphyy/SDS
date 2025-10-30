@@ -126,15 +126,15 @@ ggplot(insurance, aes(x = sex, fill = smoker)) +
   labs(title = "Proportion of smoker within sex", y = "Proportion of smoker") +
   theme_minimal()
 
-#########################################################
-#            REGRESSION AND MODELING APPROACH           #
-#########################################################
-
 # Performing one-hot encoding on region variable
 encoded_region <- model.matrix(~ region - 1, data = insurance)
 # Combine with original data (excluding original region column)
 insurance_encoded <- cbind(insurance[, names(insurance) != "region"], encoded_region)
 summary(insurance_encoded)
+
+#########################################################
+#            REGRESSION AND MODELING APPROACH           #
+#########################################################
 
 # Prediction models
 # Backward elimination with regsubsets()
