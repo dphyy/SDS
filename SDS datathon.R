@@ -43,7 +43,8 @@ summary(insurance)
 # Visualizing distribution of response variable, charges
 ggplot(insurance, aes(x = charges)) + 
   geom_density(fill = 'lightblue') +
-  labs(title = 'Insurance charges', x = 'charges')
+  labs(title = 'Insurance charges', x = 'charges') +
+  theme_minimal()
 
 # It is likely that insurance charges will have a large range of values due to factors such as
 # severity of incident, type of incident, coverage limits etc.
@@ -53,7 +54,8 @@ ggplot(insurance, aes(x = charges)) +
 # Visualizing distribution of bmi variable
 ggplot(insurance, aes(x = bmi)) + 
   geom_density(fill = 'lightblue') +
-  labs(title = 'BMI', x = 'bmi')
+  labs(title = 'BMI', x = 'bmi') +
+  theme_minimal()
 
 # Based on domain knowledge, should still include those with high BMI as it is impossible to exclude
 # them from insurance if they got it since young.
@@ -63,37 +65,44 @@ ggplot(insurance, aes(x = bmi)) +
 # Box plot for charges vs sex
 ggplot(insurance, aes(x = sex, y = charges)) + 
   geom_boxplot(fill = 'lightblue', colour = 'black') +
-  labs(title = 'charges vs sex', x = 'sex', y = 'charges')
+  labs(title = 'charges vs sex', x = 'sex', y = 'charges') +
+  theme_minimal()
 
 # Box plot for charges vs children
 ggplot(insurance, aes(x = factor(children), y = charges)) +
   geom_boxplot(fill = 'lightblue', colour = 'black') +
-  labs(title = 'charges vs children', x = 'number of children', y = 'charges')
+  labs(title = 'charges vs children', x = 'number of children', y = 'charges') +
+  theme_minimal()
 
 # Box plot for charges vs smoker
 ggplot(insurance, aes(x = smoker, y = charges)) +
   geom_boxplot(fill = 'lightblue', colour = 'black') +
-  labs(title = 'charges vs smoker', x = 'smoker', y = 'charges')
+  labs(title = 'charges vs smoker', x = 'smoker', y = 'charges') +
+  theme_minimal()
 
 # Box plot for charges vs region
 ggplot(insurance, aes(x = region, y = charges)) +
   geom_boxplot(fill = 'lightblue', colour = 'black') +
-  labs(title = 'charges vs region', x = 'region', y = 'charges')
+  labs(title = 'charges vs region', x = 'region', y = 'charges') +
+  theme_minimal()
 
 # Scatter plot for charges vs age
 ggplot(insurance, aes(x = age, y = charges)) +  
   geom_point(color = "blue", size = 2) +
-  labs(title = 'charges vs age', x = 'age', y = 'charges')
+  labs(title = 'charges vs age', x = 'age', y = 'charges') +
+  theme_minimal()
 
 # Scatter plot for charges vs bmi
 ggplot(insurance, aes(x = bmi, y = charges)) +  
   geom_point(color = "blue", size = 2) +
-  labs(title = 'charges vs bmi', x = 'bmi', y = 'charges')
+  labs(title = 'charges vs bmi', x = 'bmi', y = 'charges') +
+  theme_minimal()
 
 # Scatter plot for bmi vs age
 ggplot(insurance, aes(x = age, y = bmi)) +  
   geom_point(color = "blue", size = 2) +
-  labs(title = 'bmi vs age', x = 'age', y = 'bmi')
+  labs(title = 'bmi vs age', x = 'age', y = 'bmi') +
+  theme_minimal()
 
                 # === statistical method check === #
 # Computing correlation between continuous variables
@@ -114,7 +123,8 @@ chi_test
 ggplot(insurance, aes(x = sex, fill = smoker)) + 
   geom_bar(position = "fill") + 
   geom_hline(yintercept = 274/1337, linetype = "dotted", color = "black") +
-  labs(title = "Proportion of smoker within sex", y = "Proportion of smoker")
+  labs(title = "Proportion of smoker within sex", y = "Proportion of smoker") +
+  theme_minimal()
 
 #########################################################
 #            REGRESSION AND MODELING APPROACH           #
@@ -173,7 +183,7 @@ ggplot(data_base, aes(x = actual, y = predicted)) +
     title = "Predicted vs Actual Charges (base model)",
     x = "Actual Charges",
     y = "Predicted Charges"
-  ) +
+  )  +
   theme_minimal()
 
 # Advanced model (XGBoost)
@@ -342,4 +352,4 @@ ggplot(insurance_ew, aes(x = region_ew, y = charges, fill = region_ew)) +
     y = "Charges"
   ) +
   scale_fill_brewer(palette = "Set2") +
-  theme_minimal(base_size = 13)
+  theme_minimal()
